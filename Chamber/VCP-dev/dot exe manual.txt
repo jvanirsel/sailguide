@@ -1,0 +1,3 @@
+pyinstaller --icon=sail_logo.ico --windowed --version-file=GUIversion.txt --onefile ChamberGUI.py
+
+pyinstaller --icon=sail_logo.ico --version-file=GUIversion.txt --onefile VCP.py
