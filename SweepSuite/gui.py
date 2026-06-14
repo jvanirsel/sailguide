@@ -3,6 +3,7 @@ from tkobjects import CLBG, CLFG, FTSZ
 from sweep import VMAX
 import tkinter as tk
 import tkinter.font as tkfont
+from tkinter import ttk
 from screeninfo import get_monitors
 from collections.abc import Callable
 from pathlib import Path
@@ -204,10 +205,10 @@ class gui:
         self.statusbar = tk.Frame(self.root, bg=CLBG)
         self.statusbar.pack(side='bottom', fill='x', pady=5)
 
-        self.status = tk.Entry(self.statusbar, state='readonly', readonlybackground='#444', fg=CLFG)
-        self.status.pack(side='left', fill='x', expand=True)
+        self.progress = ttk.Progressbar(self.statusbar, mode='determinate', length=300, name='')
+        # self.progress.pack(side='left', padx=5)
 
-        self.plasma_config_lamp = tkobjects.Lamp(self.statusbar, label='Plasma')
+        self.plasma_config_lamp = tkobjects.Lamp(self.statusbar, label='PLASMA')
         self.plasma_config_lamp.pack(side='right', padx=5)
 
         self.lp_config_lamp = tkobjects.Lamp(self.statusbar, label='LP')
@@ -216,11 +217,13 @@ class gui:
         self.rpa_config_lamp = tkobjects.Lamp(self.statusbar, label='RPA')
         self.rpa_config_lamp.pack(side='right', padx=5)
 
-        self.sweep_config_lamp = tkobjects.Lamp(self.statusbar, label='Sweep')
+        self.sweep_config_lamp = tkobjects.Lamp(self.statusbar, label='SWEEP')
         self.sweep_config_lamp.pack(side='right', padx=5)
 
-        tk.Label(self.statusbar, text='Configuration status: ', bg=CLBG, fg=CLFG, font=('Courier New', FTSZ)).pack(side='right', padx=(10, 5))
-
+        tk.Label(self.statusbar, text='CONFIG STATUS:', bg=CLBG, fg=CLFG).pack(side='right', padx=(10, 5))
+        
+        self.status = tk.Entry(self.statusbar, state='readonly', readonlybackground='#444', fg=CLFG)
+        self.status.pack(side='right', fill='x', expand=True)
 
 ################ CONFIG PANEL ################
 
@@ -885,11 +888,14 @@ class gui:
 ################ SWEEP FUNCTIONS ################
 
     def _sweep_progress(self, sweep_id: int, max_id: int) -> None:
-        bar = utils.bar('Sweeping', sweep_id, max_id)
-        self.status.configure(fg='#0F0')
-        self.root.after(0, self.msg, bar, '\r')
-    
-
+        # bar = utils.bar('Sweeping', sweep_id, max_id)
+        # self.status.configure(fg='#0F0')
+        # self.root.after(0, self.msg, bar, '\r')
+        self.msg(f' Sweep progress: {sweep_id} / {max_id} ({sweep_id/max_id*100:.1f}%)')
+        # self.progress.configure(length=200)
+        self.progress.pack(side='left', padx=5)
+        self.progress['value'] = sweep_id / max_id * 100
+        
     def _run_sweep_thread(self, is_rpa: bool) -> None:
         try:
             iv_curve = sweep.fake_sweep(self.sweep_cfg, is_rpa=is_rpa, on_step=self._sweep_progress)
@@ -900,8 +906,8 @@ class gui:
 
     def _finish_sweep(self, iv_curve, is_rpa: bool) -> None:
         self.iv_curve = iv_curve
-        self.status.configure(fg=CLFG)
-        print()
+        self.progress.pack_forget()
+
 
         pfx = 'rpa_' if is_rpa else 'lp_'
         folder_stem = f'{pfx}{self.sweep_label[0].get()}'
@@ -1127,7 +1133,7 @@ class gui:
 
     def msg(self, text: str, end='\n', color=CLFG) -> None:
         print(text, end=end)
-        utils.update(self.status, text)
+        utils.update(self.status, f' {text}')
 
 
     def err(self, text: str) -> None:
