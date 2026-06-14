@@ -1,0 +1,15 @@
+###### RPA CONFIG ######
+ION SPECIES:               Argon
+APERTURE TYPE:             Circle
+APERTURE SIZE (mm):        2.5400e+01
+APERTURE AREA (mm^2):      2.0258e+03
+GRID OPACITY (%):          77
+NUM SCREENS:               4
+EFFECTIVE AREA (mm^2):     7.1213e+02
+IS ELECTRONS:              False
+
+###### ION BEAM ESTIMATES ######
+BEAM VELOCITY (km s^-1):   6.9389e+00
+BEAM ENERGY (eV):          9.9676e+00
+BEAM DENSITY (log10 m^-3): 1.0799e+01
+BEAM TEMPERATURE (eV):     4.8454e-02
